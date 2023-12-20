@@ -21,6 +21,7 @@ class ProjectFactory extends Factory
             'user_id' => User::factory(),
             'title' => $this->faker->sentence(),
             'visible' => $this->faker->boolean(),
+            'status' => $this->faker->boolean(),
         ];
     }
 }

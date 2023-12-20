@@ -14,7 +14,8 @@ return new class extends Migration {
             $table->id();
             $table->integer('user_id');
             $table->string('title');
-            $table->boolean('visible');
+            $table->boolean('visible')->default(1);
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }

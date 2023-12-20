@@ -9,7 +9,12 @@ class Task extends Model
 {
     use HasFactory;
 
-    public function project()
+    public function users()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function projects()
     {
         return $this->belongsTo(Project::class);
     }

@@ -1,19 +1,34 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\ProjectResource;
+use App\Http\Resources\V1\ProjectCollection;
+use Illuminate\Http\Request;
+use App\Filters\V1\ProjectFilter;
 
 class ProjectController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = new ProjectFilter();
+        $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
+
+        $includeTasks = $request->query('includeTasks');
+        $projects = Project::where($filterItems);
+
+        if ($includeTasks === 'true') {
+            $projects = $projects->with('tasks');
+        }
+
+        return new ProjectCollection($projects->paginate()->appends($request->query()));
     }
 
     /**
@@ -37,7 +52,8 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        // return $project;
+        return new ProjectResource($project);
     }
 
     /**

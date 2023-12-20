@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->integer('project_id');
             $table->string('title');
             $table->longText('content');
-            $table->boolean('visible');
+            $table->boolean('visible')->default(1);
+            $table->boolean('status')->default(0);
             $table->timestamps();
         });
     }
