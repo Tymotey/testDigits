@@ -18,7 +18,7 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(),
+            'user_id' => User::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(),
             'visible' => $this->faker->boolean(),
             'status' => $this->faker->boolean(),

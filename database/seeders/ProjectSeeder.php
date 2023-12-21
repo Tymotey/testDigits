@@ -8,11 +8,13 @@ use Illuminate\Database\Seeder;
 
 class ProjectSeeder extends Seeder
 {
+    use WithoutModelEvents;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Project::factory()->count(5)->create();
+        Project::factory()->count(50)->create();
     }
 }

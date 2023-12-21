@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
@@ -14,15 +15,27 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call([
+            UserSeeder::class,
+            ProjectSeeder::class,
+            TaskSeeder::class
+        ]);
+        $this->update_credentials_for_login('bondastimotei@gmail.com', 'Tim', 'asd');
+    }
 
-        $this->call([UserSeeder::class]);
-        // TaskSeeder::class,
-        // ProjectSeeder::class,
+    /**
+     * @param $email
+     * @param $name
+     * @param $password
+     * @return void
+     */
+    private function update_credentials_for_login($email, $name, $password)
+    {
+        $user = User::find(1);
+        $user->name = $name;
+        $user->email = $email;
+        $user->password = bcrypt($password); // Or whatever you use for password encryption
+        $user->save();
     }
 }
