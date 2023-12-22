@@ -24,7 +24,7 @@ class TaskFactory extends Factory
             'title' => $this->faker->sentence(),
             'content' => $this->faker->text(),
             'visible' => $this->faker->boolean(),
-            'status' => $this->faker->boolean(),
+            'status' => $this->faker->randomElement(['done', 'not-done']),
         ];
     }
 }

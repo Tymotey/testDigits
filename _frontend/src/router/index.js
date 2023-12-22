@@ -1,6 +1,7 @@
+import PageHome from "../pages/PageHome.vue";
 import Homepage from "../pages/PageHome.vue";
 import PageLogin from "../pages/user/PageLogin.vue";
-import PageLogout from "../pages/user/PageLogout.vue";
+import PageProfile from "../pages/user/PageProfile.vue";
 
 const routes = [
     {
@@ -14,11 +15,57 @@ const routes = [
             {
                 path: "login",
                 component: PageLogin,
-                meta: { requiresAuth: false },
             },
             {
                 path: "logout",
-                component: PageLogout,
+                component: {
+                    beforeRouteEnter(to, from, next) {},
+                },
+                meta: { requiresAuth: true },
+            },
+            {
+                path: "myProfile",
+                component: PageProfile,
+                meta: { requiresAuth: true },
+            },
+        ],
+    },
+    {
+        path: "/project",
+        children: [
+            {
+                path: "add",
+                component: PageHome,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: "edit",
+                component: PageHome,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: "delete",
+                component: PageHome,
+                meta: { requiresAuth: true },
+            },
+        ],
+    },
+    {
+        path: "/task",
+        children: [
+            {
+                path: "add",
+                component: PageHome,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: "edit",
+                component: PageHome,
+                meta: { requiresAuth: true },
+            },
+            {
+                path: "delete",
+                component: PageHome,
                 meta: { requiresAuth: true },
             },
         ],

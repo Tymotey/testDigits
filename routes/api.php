@@ -23,7 +23,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Api'], function () {
     // TODO: register?!
-    Route::get('login', [AuthenticationController::class, 'login']);
     Route::post('login', [AuthenticationController::class, 'login']);
 
     Route::middleware('auth:api')->group(function () {

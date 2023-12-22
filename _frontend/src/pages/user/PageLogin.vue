@@ -74,8 +74,16 @@ export default {
                             await store.commit('user/setUserLogged', response.data);
                             dismissThis();
 
-                            const redirectToHome = () => {
-                                router.push('/')
+                            const redirectAfterLogin = () => {
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const redirect = urlParams.get('redirect');
+
+                                if (redirect !== null && redirect !== '/user/logout') {
+                                    router.push(redirect)
+                                }
+                                else {
+                                    router.push('/')
+                                }
                             }
 
                             $q.notify({
@@ -86,11 +94,11 @@ export default {
                                 icon: 'fa-solid fa-check',
                                 message: 'You are logged in.',
                                 actions: [
-                                    { label: 'To home', color: 'yellow', handler: () => { redirectToHome(); } }
+                                    { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
                                 ]
                             })
                             setTimeout(() => {
-                                redirectToHome()
+                                redirectAfterLogin()
                             }, 2000)
                         })
                         .catch((err) => {

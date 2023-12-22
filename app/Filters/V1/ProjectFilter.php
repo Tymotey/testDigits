@@ -10,12 +10,17 @@ class ProjectFilter extends ApiFilter
     protected $safeParams = [
         'user_id' => ['eq'],
         'title' => ['eq'],
+        'description' => ['eq'],
         'visible' => ['eq'],
         'status' => ['eq'],
     ];
 
     protected $columnMap = [
         'userId' => 'user_id',
+        'title' => 'title',
+        'description' => 'description',
+        'visible' => 'visible',
+        'status' => 'status',
         'createdAt' => 'created_at',
         'updatedAt' => 'updated_at',
     ];

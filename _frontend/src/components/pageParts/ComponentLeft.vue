@@ -20,7 +20,7 @@
         </q-item>
         <q-item clickable v-ripple v-if="userLogged === true" to="/user/myProfile" @click="goToLink">
           <q-item-section avatar>
-            <q-icon name="fa-solid fa-right-from-bracket"></q-icon>
+            <q-icon name="fa-solid fa-user"></q-icon>
           </q-item-section>
           <q-item-section>
             My profile

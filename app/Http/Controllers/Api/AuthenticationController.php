@@ -66,18 +66,6 @@ class AuthenticationController extends Controller
      */
     public function profile(Request $request)
     {
-        if (Auth::user()) {
-            $request->user()->token()->revoke();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Logged out successfully',
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Logged out NOT successfully',
-            ], 401);
-        }
     }
 }

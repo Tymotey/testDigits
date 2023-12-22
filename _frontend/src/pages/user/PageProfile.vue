@@ -1,3 +1,3 @@
 <template>
-    Logout
+    User profile
 </template>

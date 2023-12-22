@@ -29,7 +29,7 @@ const mutations = {
             }
         }
     },
-    setUserLoggedOut({ state }) {
+    setUserLoggedOut(state) {
         state.userLogged = false;
         state.userData = { id: false, name: "", email: "", token: false };
     },

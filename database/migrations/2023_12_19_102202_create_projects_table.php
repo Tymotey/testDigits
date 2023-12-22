@@ -14,8 +14,9 @@ return new class extends Migration {
             $table->bigIncrements('id');
             $table->bigInteger('user_id')->unsigned();
             $table->string('title');
+            $table->string('description');
             $table->boolean('visible')->default(1);
-            $table->boolean('status')->default(0);
+            $table->string('status')->default('new'); // new; in-progress; on-hold; done
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

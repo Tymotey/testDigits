@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('title');
             $table->longText('content');
             $table->boolean('visible')->default(1);
-            $table->boolean('status')->default(0);
+            $table->string('status')->default('not-done'); // done not-done
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');

@@ -21,21 +21,25 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,
             TaskSeeder::class
         ]);
-        $this->update_credentials_for_login('bondastimotei@gmail.com', 'Tim', 'asd');
+        $this->update_user_login('bondastimotei-admin@gmail.com', 'Tim Admin', 'asd');
+        $this->update_user_login('bondastimotei-user@gmail.com', 'Tim User', 'asd', 2, 0);
     }
 
     /**
+     * Change user data
+     * 
      * @param $email
      * @param $name
      * @param $password
      * @return void
      */
-    private function update_credentials_for_login($email, $name, $password)
+    private function update_user_login($email, $name, $password, $user = 1, $is_admin = 1)
     {
-        $user = User::find(1);
+        $user = User::find($user);
         $user->name = $name;
         $user->email = $email;
         $user->password = bcrypt($password); // Or whatever you use for password encryption
+        $user->is_admin = $is_admin;
         $user->save();
     }
 }

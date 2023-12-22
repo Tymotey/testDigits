@@ -20,8 +20,9 @@ class ProjectFactory extends Factory
         return [
             'user_id' => User::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(),
+            'description' => $this->faker->text(),
             'visible' => $this->faker->boolean(),
-            'status' => $this->faker->boolean(),
+            'status' => $this->faker->randomElement(['new', 'in-progress', 'on-hold', 'done']),
         ];
     }
 }
