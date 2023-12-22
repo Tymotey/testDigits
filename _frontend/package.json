@@ -1,0 +1,25 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.16.8",
+    "@quasar/vite-plugin": "^1.6.0",
+    "axios": "^1.6.2",
+    "quasar": "^2.14.0",
+    "vue": "^3.3.11",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.5.2",
+    "sass": "^1.69.5",
+    "sass-loader": "^13.3.2",
+    "vite": "^5.0.8"
+  }
+}

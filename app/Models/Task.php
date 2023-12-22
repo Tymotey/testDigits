@@ -9,6 +9,9 @@ class Task extends Model
 {
     use HasFactory;
 
+    /**
+     * Add links to other tables.
+     */
     public function user()
     {
         return $this->belongsTo(User::class);
