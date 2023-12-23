@@ -23,6 +23,7 @@ import { ref } from 'vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
+import { getNotificationSettings } from '../../../functions'
 
 export default {
     setup() {
@@ -39,29 +40,13 @@ export default {
 
             async onSubmit() {
                 if (userName.value === null) {
-                    $q.notify({
-                        color: 'red-5',
-                        textColor: 'white',
-                        icon: 'fa-solid fa-triangle-exclamation ',
-                        message: 'Please fill in username'
-                    })
+                    $q.notify(getNotificationSettings('error', 'Please fill in username'))
                 }
                 else if (userPass.value === null) {
-                    $q.notify({
-                        color: 'red-5',
-                        textColor: 'white',
-                        icon: 'fa-solid fa-triangle-exclamation',
-                        message: 'Please fill in password'
-                    })
+                    $q.notify(getNotificationSettings('error', 'Please fill in password'))
                 }
                 else {
-                    let dismissThis = $q.notify({
-                        type: 'ongoing',
-                        color: 'green-4',
-                        textColor: 'white',
-                        icon: 'fa-solid fa-check',
-                        message: 'Logging in...'
-                    })
+                    let dismissThis = $q.notify(getNotificationSettings('ongoing', 'Logging in..'))
 
                     let requestUrl = await store.dispatch('ajax/getFullApiWithActionUrl', 'login');
                     await axios
@@ -71,7 +56,7 @@ export default {
                             appName: 'testApp'
                         })
                         .then(async (response) => {
-                            await store.commit('user/setUserLogged', response.data);
+                            await store.dispatch("user/doLoginUser", response.data);
                             dismissThis();
 
                             const redirectAfterLogin = () => {
@@ -86,17 +71,17 @@ export default {
                                 }
                             }
 
-                            $q.notify({
-                                color: 'green-4',
-                                timeout: 1000,
-                                progress: true,
-                                textColor: 'white',
-                                icon: 'fa-solid fa-check',
-                                message: 'You are logged in.',
-                                actions: [
-                                    { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
-                                ]
-                            })
+                            $q.notify(
+                                getNotificationSettings(
+                                    'positive',
+                                    'You are logged in.',
+                                    {
+                                        actions: [
+                                            { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
+                                        ]
+                                    }
+                                )
+                            )
                             setTimeout(() => {
                                 redirectAfterLogin()
                             }, 2000)
@@ -104,12 +89,17 @@ export default {
                         .catch((err) => {
                             console.log(err);
                             dismissThis();
-                            $q.notify({
-                                color: 'red-5',
-                                textColor: 'white',
-                                icon: 'fa-solid fa-triangle-exclamation',
-                                message: err.response?.data?.message || 'Error loggin in'
-                            })
+                            $q.notify(
+                                getNotificationSettings(
+                                    'negative',
+                                    err.response?.data?.message || 'Error loggin in',
+                                    {
+                                        actions: [
+                                            { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
+                                        ]
+                                    }
+                                )
+                            )
                         })
                 }
             },

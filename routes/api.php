@@ -29,7 +29,7 @@ Route::group(['namespace' => 'Api'], function () {
         Route::get('logout', [AuthenticationController::class, 'logout']);
     });
 });
-Route::group(['namespace' => 'Api', 'prefix' => 'v1'], function () {
+Route::group(['namespace' => 'App\Http\Controllers\Api\V1', 'prefix' => 'v1'], function () {
     Route::middleware('auth:api')->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::apiResource('tasks', TaskController::class);

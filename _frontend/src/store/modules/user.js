@@ -15,10 +15,19 @@ const getters = {
     },
 };
 
-const actions = {};
+const actions = {
+    doLoginUser({ commit }, data) {
+        commit("setUserLoggedIn", data);
+        commit("projects/resetProjects", null, { root: true }); // reset store state
+        commit("projects/setProjectsFromUrl", null, { root: true }); // get new projects
+    },
+    doLogoutUser({ commit }) {
+        commit("setUserLoggedOut");
+    },
+};
 
 const mutations = {
-    setUserLogged(state, data) {
+    setUserLoggedIn(state, data) {
         if (data.success === true) {
             if (data.token && data.user) {
                 state.userData.token = data.token;

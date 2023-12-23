@@ -8,7 +8,9 @@ import ComponentLeft from './components/pageParts/ComponentLeft.vue';
     <ComponentHeader />
     <ComponentLeft />
     <q-page-container style="height: 100vh;">
-      <router-view />
+      <Suspense>
+        <router-view />
+      </Suspense>
     </q-page-container>
   </q-layout>
 </template>

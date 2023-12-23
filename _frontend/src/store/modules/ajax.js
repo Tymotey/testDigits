@@ -5,6 +5,8 @@ const state = () => ({
     actions: {
         login: "login",
         logout: "logout",
+        projects: "projects",
+        tasks: "tasks",
     },
 });
 

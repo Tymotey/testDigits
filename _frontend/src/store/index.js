@@ -2,8 +2,10 @@ import { createStore, createLogger } from "vuex";
 import ajax from "./modules/ajax";
 import drawer from "./modules/drawer";
 import user from "./modules/user";
+import projects from "./modules/projects";
 import VuexPersistence from "vuex-persist";
 
+// TODO: switch off
 const debug = process.env.NODE_ENV !== "production";
 const vuexLocal = new VuexPersistence({
     storage: window.localStorage,
@@ -14,8 +16,8 @@ export default createStore({
         ajax,
         drawer,
         user,
+        projects,
     },
     strict: debug,
-    // plugins: debug ? [createLogger(), vuexLocal.plugin] : [vuexLocal.plugin],
-    plugins: debug ? [createLogger()] : [],
+    plugins: debug ? [createLogger(), vuexLocal.plugin] : [vuexLocal.plugin],
 });

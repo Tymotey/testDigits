@@ -1,13 +1,13 @@
-import PageHome from "../pages/PageHome.vue";
-import Homepage from "../pages/PageHome.vue";
-import PageLogin from "../pages/user/PageLogin.vue";
-import PageProfile from "../pages/user/PageProfile.vue";
+import PageHome from "../components/pages/PageHome.vue";
+import PageLogin from "../components/pages/user/PageLogin.vue";
+import PageLogout from "../components/pages/user/PageLogout.vue";
+import PageProfile from "../components/pages/user/PageProfile.vue";
 
 const routes = [
     {
         path: "/",
         name: "Home",
-        component: Homepage,
+        component: PageHome,
     },
     {
         path: "/user",
@@ -18,9 +18,7 @@ const routes = [
             },
             {
                 path: "logout",
-                component: {
-                    beforeRouteEnter(to, from, next) {},
-                },
+                component: PageLogout,
                 meta: { requiresAuth: true },
             },
             {
