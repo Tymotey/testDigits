@@ -1,6 +1,4 @@
-import { useStore } from "vuex";
 import axios from "axios";
-import { useQuasar } from "quasar";
 
 const getNotificationSettings = (
     type = "ongoing", // positive, negative, warning, info, ongoing
@@ -29,30 +27,62 @@ const getNotificationSettings = (
     return returnData;
 };
 
-const doRequestList = async (
-    url = false,
+const getPaginationParams = (type, store) => {
+    let paginationParams = [];
+
+    paginationParams.push("page=" + store.getters[type + "/getPage"]);
+    paginationParams.push("results=" + store.getters[type + "/getPerPage"]);
+
+    return paginationParams.join("&");
+};
+
+const doRequest = async (
+    actionName = false,
     actionOnSuccess = () => {},
     actionOnError = () => {},
-    loader
+    data
 ) => {
-    if (url) {
-        const store = useStore();
-        const $q = useQuasar();
+    if (actionName) {
         let loaderSettings = {
             show: false,
             messageLoading: "Loading...",
-            ...loader,
+            ...data.loader,
         };
-        let userToken = store.getters["user/getUserToken"];
-        let requestUrl = await store.dispatch(
+
+        // Url add
+        let isUserActions = ["login", "logout"].indexOf(actionName) !== -1;
+        let paginationUrlAdd = !isUserActions
+            ? getPaginationParams(actionName, data.store)
+            : null;
+
+        let urlAdd = [];
+        if ([null, undefined].indexOf(paginationUrlAdd) === -1) {
+            urlAdd.push(paginationUrlAdd);
+        }
+        if ([null, undefined].indexOf(data.urlAdd) === -1) {
+            urlAdd.push(data.urlAdd);
+        }
+
+        // User token
+        let userToken = data.store.getters["user/getUserToken"];
+
+        // Request type
+        if (data.method === undefined) data.method = "get";
+        if (data.postData === undefined) data.postData = {};
+
+        // Get request Url
+        let requestUrl = await data.store.dispatch(
             "ajax/getFullApiWithActionUrl",
-            url
+            {
+                action: actionName,
+                urlAdd: urlAdd.join("&"),
+            }
         );
 
         if (requestUrl) {
             let dismissThis = false;
             if (loaderSettings.show) {
-                dismissThis = $q.notify(
+                dismissThis = data.q.notify(
                     getNotificationSettings(
                         "ongoing",
                         loaderSettings.messageLoading
@@ -63,14 +93,24 @@ const doRequestList = async (
             let headers = {
                 Authorization: `Bearer ` + userToken,
             };
-            if (url === "logout") {
+            if (actionName === "logout") {
                 headers["Accept"] = "application/json";
             }
 
-            await axios
-                .get(requestUrl, {
+            // Make request correctly based on method value
+            let request = "";
+            if (data.method === "get")
+                request = axios.get(requestUrl, {
                     headers: headers,
-                })
+                });
+            else {
+                request = axios.post(requestUrl, data.postData, {
+                    headers: headers,
+                });
+            }
+
+            // Get results and run the callback
+            request
                 .then(async (response) => {
                     if (dismissThis !== false) dismissThis();
                     actionOnSuccess(response);
@@ -78,16 +118,16 @@ const doRequestList = async (
                 .catch((err) => {
                     console.log(err);
                     if (dismissThis !== false) dismissThis();
-                    $q.notify(
+                    data.q.notify(
                         getNotificationSettings(
                             "negative",
                             err.response?.data?.message || "Error"
                         )
                     );
-                    actionOnError();
+                    if (actionOnError !== null) actionOnError();
                 });
         }
     }
 };
 
-export { doRequestList, getNotificationSettings };
+export { doRequest, getNotificationSettings };

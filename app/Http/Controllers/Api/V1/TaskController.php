@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\TaskResource;
 use App\Http\Resources\V1\TaskCollection;
 use Illuminate\Http\Request;
-use App\Filters\V1\ProjectFilter;
+use App\Filters\V1\TaskFilter;
 
 class TaskController extends Controller
 {
@@ -18,16 +18,33 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = new ProjectFilter();
-        $queryItems = $filter->transform($request);
+        $filter = new TaskFilter();
+        $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
-        if (count($queryItems) === 0) {
-            return new TaskCollection(Task::paginate());
-        } else {
-            $projects = Task::where($queryItems)->paginate();
+        $tasks = Task::where($filterItems);
 
-            return new TaskCollection($projects->appends($request->query()));
+        // Add per page limit
+        $perPage = $request->input('results', 999);
+        if (!is_numeric($perPage)) {
+            $perPage = 999;
         }
+
+        // Get task by project
+        $project_id = $request->input('projectId', null);
+        if ($project_id !== null) {
+            $tasks->where('project_id', $project_id);
+        }
+
+        // If user type
+        if ($request->user()->hasRole('user')) {
+            $tasks->where('assigned_to', $request->user()->id);
+            $tasks->where('visible', '1');
+        }
+
+        // Order by column order
+        $tasks->orderBy('sort_by', 'asc');
+
+        return new TaskCollection($tasks->paginate($perPage)->appends($request->query()));
     }
 
     /**

@@ -30,7 +30,7 @@ Route::group(['namespace' => 'Api'], function () {
     });
 });
 Route::group(['namespace' => 'App\Http\Controllers\Api\V1', 'prefix' => 'v1'], function () {
-    Route::middleware('auth:api')->group(function () {
+    Route::middleware(['auth:api', 'role:admin,user'])->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::apiResource('tasks', TaskController::class);
     });

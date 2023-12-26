@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             TaskSeeder::class
         ]);
         $this->update_user_login('bondastimotei-admin@gmail.com', 'Tim Admin', 'asd');
-        $this->update_user_login('bondastimotei-user@gmail.com', 'Tim User', 'asd', 2, 0);
+        $this->update_user_login('bondastimotei-user@gmail.com', 'Tim User', 'asd', 2, 'user');
     }
 
     /**
@@ -33,13 +33,13 @@ class DatabaseSeeder extends Seeder
      * @param $password
      * @return void
      */
-    private function update_user_login($email, $name, $password, $user = 1, $is_admin = 1)
+    private function update_user_login($email, $name, $password, $user_id = 1, $role = 'admin')
     {
-        $user = User::find($user);
+        $user = User::find($user_id);
         $user->name = $name;
         $user->email = $email;
         $user->password = bcrypt($password); // Or whatever you use for password encryption
-        $user->is_admin = $is_admin;
+        $user->role = $role;
         $user->save();
     }
 }

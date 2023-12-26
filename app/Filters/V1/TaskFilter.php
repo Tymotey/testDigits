@@ -5,10 +5,10 @@ namespace App\Filters\V1;
 use Illuminate\Http\Request;
 use App\Filters\ApiFilter;
 
-class ProjectFilter extends ApiFilter
+class TaskFilter extends ApiFilter
 {
     protected $safeParams = [
-        'user_id' => ['eq'],
+        'assigned_to' => ['eq'],
         'project_id' => ['eq'],
         'title' => ['eq'],
         'content' => ['eq'],
@@ -17,7 +17,7 @@ class ProjectFilter extends ApiFilter
     ];
 
     protected $columnMap = [
-        'userId' => 'user_id',
+        'assignedTo' => 'assigned_to',
         'projectId' => 'project_id',
         'createdAt' => 'created_at',
         'updatedAt' => 'updated_at',

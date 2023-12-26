@@ -1,6 +1,8 @@
+const defaultData = { id: false, name: "", email: "", token: false };
+
 const state = () => ({
     userLogged: false,
-    userData: { id: false, name: "", email: "", token: false },
+    userData: { ...defaultData },
 });
 
 const getters = {
@@ -10,6 +12,9 @@ const getters = {
     getUserData: (state) => {
         return state.userData;
     },
+    getUserId: (state) => {
+        return state.userData.id;
+    },
     getUserToken: (state) => {
         return state.userData.token;
     },
@@ -18,8 +23,8 @@ const getters = {
 const actions = {
     doLoginUser({ commit }, data) {
         commit("setUserLoggedIn", data);
-        commit("projects/resetProjects", null, { root: true }); // reset store state
-        commit("projects/setProjectsFromUrl", null, { root: true }); // get new projects
+        commit("projects/resetAllData", null, { root: true }); // reset store projects state
+        // TODO: mai trebuie si altele?!?!
     },
     doLogoutUser({ commit }) {
         commit("setUserLoggedOut");
@@ -40,7 +45,7 @@ const mutations = {
     },
     setUserLoggedOut(state) {
         state.userLogged = false;
-        state.userData = { id: false, name: "", email: "", token: false };
+        state.userData = { ...defaultData };
     },
 };
 

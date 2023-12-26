@@ -18,11 +18,14 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
+            'assigned_to' => User::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(),
             'description' => $this->faker->text(),
             'visible' => $this->faker->boolean(),
             'status' => $this->faker->randomElement(['new', 'in-progress', 'on-hold', 'done']),
+            'created_by' => User::inRandomOrder()->first()->id,
+            'created_at' => $this->faker->dateTimeBetween('-3 weeks', '-4 day'),
+            'updated_at' => $this->faker->dateTimeBetween('-3 days')
         ];
     }
 }

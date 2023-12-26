@@ -1,0 +1,3 @@
+<template>
+    Edit project
+</template>

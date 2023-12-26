@@ -12,15 +12,16 @@ return new class extends Migration {
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('assigned_to')->unsigned();
             $table->bigInteger('project_id')->unsigned();
             $table->string('title');
             $table->longText('content');
             $table->boolean('visible')->default(1);
             $table->string('status')->default('not-done'); // done not-done
+            $table->bigInteger('created_by')->unsigned();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade')->onUpdate('cascade');
         });
     }

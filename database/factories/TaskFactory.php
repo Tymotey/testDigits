@@ -18,13 +18,24 @@ class TaskFactory extends Factory
      */
     public function definition(): array
     {
+        $assigned_to = User::inRandomOrder()->first()->id;
+        $created_by = $assigned_to;
+        $sameUsers = $this->faker->boolean();
+        if (!$sameUsers) {
+            $created_by = User::inRandomOrder()->first()->id;
+        }
+
         return [
-            'user_id' => User::inRandomOrder()->first()->id,
+            'assigned_to' => $assigned_to,
             'project_id' => Project::inRandomOrder()->first()->id,
             'title' => $this->faker->sentence(),
             'content' => $this->faker->text(),
             'visible' => $this->faker->boolean(),
             'status' => $this->faker->randomElement(['done', 'not-done']),
+            'sort_by' => $this->faker->numberBetween(0, 100),
+            'created_by' => $created_by,
+            'created_at' => $this->faker->dateTimeBetween('-3 weeks', '-4 day'),
+            'updated_at' => $this->faker->dateTimeBetween('-3 days')
         ];
     }
 }

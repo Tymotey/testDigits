@@ -10,6 +10,7 @@ use App\Http\Resources\V1\ProjectResource;
 use App\Http\Resources\V1\ProjectCollection;
 use Illuminate\Http\Request;
 use App\Filters\V1\ProjectFilter;
+use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -18,17 +19,34 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
+        // $request->user()->id
+        // var_dump((bool) $request->user()->isAdmin());
         $filter = new ProjectFilter();
         $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
-        $includeTasks = $request->query('includeTasks');
         $projects = Project::where($filterItems);
 
+        // Add tasks to project list
+        $includeTasks = $request->query('includeTasks');
         if ($includeTasks === 'true') {
             $projects = $projects->with('tasks');
         }
 
-        return new ProjectCollection($projects->paginate()->appends($request->query()));
+        $projects->with('user');
+
+        // Add per page limit
+        $perPage = $request->input('results', 15);
+        if (!is_numeric($perPage)) {
+            $perPage = 15;
+        }
+
+        // If user type
+        if ($request->user()->hasRole('user')) {
+            $projects->where('assigned_to', $request->user()->id);
+            $projects->where('visible', '1');
+        }
+
+        return new ProjectCollection($projects->paginate($perPage)->appends($request->query()));
     }
 
     /**

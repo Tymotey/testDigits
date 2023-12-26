@@ -49,16 +49,16 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $task)
+    public function show(User $user)
     {
         // return $task;
-        return new UserResource($task);
+        return new UserResource($user);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $task)
+    public function edit(User $user)
     {
         //
     }
@@ -66,7 +66,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $task)
+    public function update(UpdateUserRequest $request, User $user)
     {
         //
     }
@@ -74,7 +74,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $task)
+    public function destroy(User $user)
     {
         //
     }

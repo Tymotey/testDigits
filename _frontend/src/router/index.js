@@ -1,7 +1,14 @@
 import PageHome from "../components/pages/PageHome.vue";
+// User
 import PageLogin from "../components/pages/user/PageLogin.vue";
 import PageLogout from "../components/pages/user/PageLogout.vue";
 import PageProfile from "../components/pages/user/PageProfile.vue";
+// Projects
+import PageProjectAdd from "../components/pages/projects/PageAdd.vue";
+import PageProjectEdit from "../components/pages/projects/PageEdit.vue";
+// Tasks
+import PageTaskAdd from "../components/pages/tasks/PageAdd.vue";
+import PageTaskEdit from "../components/pages/tasks/PageEdit.vue";
 
 const routes = [
     {
@@ -33,12 +40,12 @@ const routes = [
         children: [
             {
                 path: "add",
-                component: PageHome,
+                component: PageProjectAdd,
                 meta: { requiresAuth: true },
             },
             {
                 path: "edit",
-                component: PageHome,
+                component: PageProjectEdit,
                 meta: { requiresAuth: true },
             },
             {
@@ -53,12 +60,12 @@ const routes = [
         children: [
             {
                 path: "add",
-                component: PageHome,
+                component: PageTaskAdd,
                 meta: { requiresAuth: true },
             },
             {
                 path: "edit",
-                component: PageHome,
+                component: PageTaskEdit,
                 meta: { requiresAuth: true },
             },
             {

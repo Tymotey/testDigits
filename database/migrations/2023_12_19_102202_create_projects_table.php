@@ -12,14 +12,15 @@ return new class extends Migration {
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_id')->unsigned();
+            $table->bigInteger('assigned_to')->unsigned();
             $table->string('title');
             $table->string('description');
             $table->boolean('visible')->default(1);
             $table->string('status')->default('new'); // new; in-progress; on-hold; done
+            $table->bigInteger('created_by')->unsigned();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('assigned_to')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

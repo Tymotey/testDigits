@@ -8,7 +8,7 @@ use App\Filters\ApiFilter;
 class ProjectFilter extends ApiFilter
 {
     protected $safeParams = [
-        'user_id' => ['eq'],
+        'assigned_to' => ['eq'],
         'title' => ['eq'],
         'description' => ['eq'],
         'visible' => ['eq'],
@@ -16,7 +16,7 @@ class ProjectFilter extends ApiFilter
     ];
 
     protected $columnMap = [
-        'userId' => 'user_id',
+        'assignedTo' => 'assigned_to',
         'title' => 'title',
         'description' => 'description',
         'visible' => 'visible',

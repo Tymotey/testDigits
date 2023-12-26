@@ -18,97 +18,77 @@
 </template>
 
 <script>
-import { useQuasar } from 'quasar'
-import { ref } from 'vue'
-import { useStore } from 'vuex'
-import axios from 'axios'
 import { useRouter } from 'vue-router'
-import { getNotificationSettings } from '../../../functions'
+import { ref } from 'vue'
+import { getNotificationSettings, doRequest } from '../../../functions'
 
 export default {
-    setup() {
-        const router = useRouter()
-        const store = useStore()
-        const $q = useQuasar()
-
-        const userName = ref(null)
-        const userPass = ref(null)
-
+    data() {
         return {
-            userName,
-            userPass,
-
-            async onSubmit() {
-                if (userName.value === null) {
-                    $q.notify(getNotificationSettings('error', 'Please fill in username'))
-                }
-                else if (userPass.value === null) {
-                    $q.notify(getNotificationSettings('error', 'Please fill in password'))
-                }
-                else {
-                    let dismissThis = $q.notify(getNotificationSettings('ongoing', 'Logging in..'))
-
-                    let requestUrl = await store.dispatch('ajax/getFullApiWithActionUrl', 'login');
-                    await axios
-                        .post(requestUrl, {
-                            email: userName.value,
-                            password: userPass.value,
-                            appName: 'testApp'
-                        })
-                        .then(async (response) => {
-                            await store.dispatch("user/doLoginUser", response.data);
-                            dismissThis();
-
-                            const redirectAfterLogin = () => {
-                                const urlParams = new URLSearchParams(window.location.search);
-                                const redirect = urlParams.get('redirect');
-
-                                if (redirect !== null && redirect !== '/user/logout') {
-                                    router.push(redirect)
-                                }
-                                else {
-                                    router.push('/')
-                                }
-                            }
-
-                            $q.notify(
-                                getNotificationSettings(
-                                    'positive',
-                                    'You are logged in.',
-                                    {
-                                        actions: [
-                                            { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
-                                        ]
-                                    }
-                                )
-                            )
-                            setTimeout(() => {
-                                redirectAfterLogin()
-                            }, 2000)
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            dismissThis();
-                            $q.notify(
-                                getNotificationSettings(
-                                    'negative',
-                                    err.response?.data?.message || 'Error loggin in',
-                                    {
-                                        actions: [
-                                            { label: 'To home', color: 'yellow', handler: () => { router.push('/'); } }
-                                        ]
-                                    }
-                                )
-                            )
-                        })
-                }
-            },
-
-            onReset() {
-                userName.value = null
-                userPass.value = null
-            }
+            userName: ref(null),
+            userPass: ref(null),
         }
-    }
+    },
+    methods: {
+        async onSubmit() {
+            if (this.userName.value === '') {
+                this.$q.notify(getNotificationSettings('error', 'Please fill in username'))
+            }
+            else if (this.userPass.value === '') {
+                this.$q.notify(getNotificationSettings('error', 'Please fill in password'))
+            }
+            else {
+                await doRequest(
+                    "login",
+                    async (response) => {
+                        await this.$store.dispatch("user/doLoginUser", response.data);
+
+                        const redirectAfterLogin = () => {
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const redirect = urlParams.get('redirect');
+
+                            if (redirect !== null && redirect !== '/user/logout') {
+                                this.$router.push(redirect)
+                            }
+                            else {
+                                this.$router.push('/')
+                            }
+                        }
+                        this.$q.notify(
+                            getNotificationSettings(
+                                'positive',
+                                'You are logged in.',
+                                {
+                                    actions: [
+                                        { label: 'To home', color: 'yellow', handler: () => { this.$router.push('/'); } }
+                                    ]
+                                }
+                            )
+                        )
+                        // TODO: reset projects/users
+                        setTimeout(() => {
+                            redirectAfterLogin()
+                        }, 2000)
+                    },
+                    null,
+                    {
+                        method: 'post',
+                        postData: {
+                            email: this.userName,
+                            password: this.userPass,
+                            appName: 'testApp'
+                        },
+                        loader: { show: true, messageLoading: 'Logging in' },
+                        store: this.$store,
+                        q: this.$q
+                    }
+                );
+            }
+        },
+        onReset() {
+            this.userName = '';
+            this.userPass = '';
+        }
+    },
 }
 </script>

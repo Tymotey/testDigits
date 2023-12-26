@@ -22,6 +22,7 @@ class TaskResource extends JsonResource
             'content' => $this->content,
             'status' => $this->status,
             'visible' => $this->visible,
+            'sortBy' => $this->sort_by,
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,
         ];

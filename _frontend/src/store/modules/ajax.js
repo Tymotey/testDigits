@@ -13,13 +13,31 @@ const state = () => ({
 const getters = {};
 
 const actions = {
-    getFullApiWithActionUrl: ({ state }, action = "") => {
-        if (action !== "") {
-            let urlAdd =
-                ["login", "logout"].indexOf(action) !== -1
-                    ? state.apiUrl
-                    : state.apiUrl + state.apiVersionUrl;
-            return state.serverUrl + urlAdd + state.actions[action];
+    getFullApiWithActionUrl: (
+        { state },
+        params = { action: "", urlAdd: "" }
+    ) => {
+        if (params.action !== "") {
+            let isUserActions =
+                ["login", "logout"].indexOf(params.action) !== -1;
+
+            // Add version for all actions except login/logout
+            let versionAdd = isUserActions
+                ? state.apiUrl
+                : state.apiUrl + state.apiVersionUrl;
+
+            // Add extra parameters to URL
+            let extraUrl =
+                params.urlAdd && params.urlAdd !== ""
+                    ? "?" + params.urlAdd
+                    : "";
+
+            return (
+                state.serverUrl +
+                versionAdd +
+                state.actions[params.action] +
+                extraUrl
+            );
         } else {
             return false;
         }
