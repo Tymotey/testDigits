@@ -23,12 +23,12 @@ cd _frontend
 npm install
 ```
 
-# Start server and frontend:
+# Start:
+
+Run the server and frontend.
 
 ```
-php artisan serve
-cd _frontend
-npm run dev
+npm run startAll
 ```
 
 # Test data:
