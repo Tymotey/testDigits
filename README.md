@@ -1,11 +1,3 @@
-# Docker:
-
-```
-docker build -t 11digits/test .
-docker push 11digits/test
-docker run -it -p 5173:5173 -p 8000:8000 --rm --name test 11digits/test
-```
-
 # Install:
 
 ## Server
