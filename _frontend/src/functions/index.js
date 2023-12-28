@@ -30,8 +30,10 @@ const getNotificationSettings = (
 const getPaginationParams = (type, store) => {
     let paginationParams = [];
 
-    paginationParams.push("page=" + store.getters[type + "/getPage"]);
-    paginationParams.push("results=" + store.getters[type + "/getPerPage"]);
+    if (store.getters[type + "/getPage"]) {
+        paginationParams.push("page=" + store.getters[type + "/getPage"]);
+        paginationParams.push("results=" + store.getters[type + "/getPerPage"]);
+    }
 
     return paginationParams.join("&");
 };
@@ -44,16 +46,18 @@ const doRequest = async (
 ) => {
     if (actionName) {
         let loaderSettings = {
-            show: false,
+            show: true,
             messageLoading: "Loading...",
             ...data.loader,
         };
 
         // Url add
         let isUserActions = ["login", "logout"].indexOf(actionName) !== -1;
-        let paginationUrlAdd = !isUserActions
-            ? getPaginationParams(actionName, data.store)
-            : null;
+        let isPageAction = actionName.search("/") !== -1;
+        let paginationUrlAdd =
+            !isUserActions || !isPageAction
+                ? getPaginationParams(actionName, data.store)
+                : null;
 
         let urlAdd = [];
         if ([null, undefined].indexOf(paginationUrlAdd) === -1) {
@@ -99,11 +103,19 @@ const doRequest = async (
 
             // Make request correctly based on method value
             let request = "";
-            if (data.method === "get")
+            if (data.method === "get") {
                 request = axios.get(requestUrl, {
                     headers: headers,
                 });
-            else {
+            } else if (data.method === "delete") {
+                request = axios.delete(requestUrl, {
+                    headers: headers,
+                });
+            } else if (data.method === "put") {
+                request = axios.put(requestUrl, data.postData, {
+                    headers: headers,
+                });
+            } else {
                 request = axios.post(requestUrl, data.postData, {
                     headers: headers,
                 });

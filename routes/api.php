@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\AuthenticationController;
 use App\Http\Controllers\Api\V1\ProjectController;
 use App\Http\Controllers\Api\V1\TaskController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::group(['namespace' => 'Api'], function () {
-    // TODO: register?!
     Route::post('login', [AuthenticationController::class, 'login']);
 
     Route::middleware('auth:api')->group(function () {
@@ -33,5 +32,6 @@ Route::group(['namespace' => 'App\Http\Controllers\Api\V1', 'prefix' => 'v1'], f
     Route::middleware(['auth:api', 'role:admin,user'])->group(function () {
         Route::apiResource('projects', ProjectController::class);
         Route::apiResource('tasks', TaskController::class);
+        Route::apiResource('users', UserController::class);
     });
 });

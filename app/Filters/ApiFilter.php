@@ -17,6 +17,7 @@ class ApiFilter
         'gt' => '>',
         'gte' => '>=',
         'ne' => '!=',
+        'like' => 'LIKE',
     ];
 
     public function transform(Request $request)
@@ -34,7 +35,12 @@ class ApiFilter
 
             foreach ($operators as $operator) {
                 if (isset($query[$operator])) {
-                    $eloQuery[] = [$column, $this->operatorMap[$operator], $query[$operator]];
+                    $value = $query[$operator];
+                    if ($this->operatorMap[$operator] === 'LIKE') {
+                        $value = '%' . $value . '%';
+                    }
+
+                    $eloQuery[] = [$column, $this->operatorMap[$operator], $value];
                 }
             }
         }

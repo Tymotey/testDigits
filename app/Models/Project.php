@@ -9,6 +9,15 @@ class Project extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'assigned_to',
+        'title',
+        'description',
+        'visible',
+        'status',
+        'created_by'
+    ];
+
     /**
      * Add links to other tables.
      */

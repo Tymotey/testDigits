@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Project;
-use App\Http\Requests\StoreProjectRequest;
-use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Requests\V1\StoreProjectRequest;
+use App\Http\Requests\V1\UpdateProjectRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ProjectResource;
 use App\Http\Resources\V1\ProjectCollection;
 use Illuminate\Http\Request;
 use App\Filters\V1\ProjectFilter;
-use Illuminate\Support\Facades\Gate;
 
 class ProjectController extends Controller
 {
@@ -19,8 +18,6 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        // $request->user()->id
-        // var_dump((bool) $request->user()->isAdmin());
         $filter = new ProjectFilter();
         $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
@@ -31,8 +28,6 @@ class ProjectController extends Controller
         if ($includeTasks === 'true') {
             $projects = $projects->with('tasks');
         }
-
-        $projects->with('user');
 
         // Add per page limit
         $perPage = $request->input('results', 15);
@@ -46,23 +41,9 @@ class ProjectController extends Controller
             $projects->where('visible', '1');
         }
 
+        $projects->orderBy('title', 'asc');
+
         return new ProjectCollection($projects->paginate($perPage)->appends($request->query()));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreProjectRequest $request)
-    {
-        //
     }
 
     /**
@@ -70,16 +51,18 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        // return $project;
-        return new ProjectResource($project);
+        return (new ProjectResource($project->loadMissing(['tasks'])));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Store a newly created resource in storage.
      */
-    public function edit(Project $project)
+    public function store(StoreProjectRequest $request)
     {
-        //
+        $data = $request->all();
+        $data['created_by'] = $request->user()->id;
+
+        return new ProjectResource(Project::create($data));
     }
 
     /**
@@ -87,7 +70,7 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $project->update($request->all());
     }
 
     /**
@@ -95,6 +78,6 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
     }
 }

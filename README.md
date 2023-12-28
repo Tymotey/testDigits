@@ -1,6 +1,8 @@
-# Server
+# Install:
 
-Just once:
+## Server
+
+Create database named: **11test** OR if you want different name, change in .env, parameter **DB_DATABASE**
 
 ```
 npm install
@@ -12,23 +14,17 @@ php artisan passport:install --force
 php artisan passport:keys --force
 ```
 
-Start server:
-
-```
-php artisan serve
-```
-
-# Frontend
-
-Just once:
+## Frontend
 
 ```
 cd \_frontend
 npm install
 ```
 
-Start server:
+# Start test:
 
 ```
 npn run dev
+cd \_frontend
+php artisan serve
 ```

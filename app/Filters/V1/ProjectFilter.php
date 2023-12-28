@@ -9,8 +9,8 @@ class ProjectFilter extends ApiFilter
 {
     protected $safeParams = [
         'assigned_to' => ['eq'],
-        'title' => ['eq'],
-        'description' => ['eq'],
+        'title' => ['eq', 'like'],
+        'description' => ['eq', 'like'],
         'visible' => ['eq'],
         'status' => ['eq'],
     ];
@@ -25,26 +25,4 @@ class ProjectFilter extends ApiFilter
         'updatedAt' => 'updated_at',
     ];
 
-    public function transform(Request $request)
-    {
-        $eloQuery = [];
-
-        foreach ($this->safeParams as $param => $operators) {
-            $query = $request->query($param);
-
-            if (!isset($query)) {
-                continue;
-            }
-
-            $column = $this->columnMap[$param] ?? $param;
-
-            foreach ($operators as $operator) {
-                if (isset($query[$operator])) {
-                    $eloQuery[] = [$column, $this->operatorMap[$operator], $query[$operator]];
-                }
-            }
-        }
-
-        return $eloQuery;
-    }
 }

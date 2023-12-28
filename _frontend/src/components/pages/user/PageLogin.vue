@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 import { getNotificationSettings, doRequest } from '../../../functions'
 
@@ -31,59 +30,50 @@ export default {
     },
     methods: {
         async onSubmit() {
-            if (this.userName.value === '') {
-                this.$q.notify(getNotificationSettings('error', 'Please fill in username'))
-            }
-            else if (this.userPass.value === '') {
-                this.$q.notify(getNotificationSettings('error', 'Please fill in password'))
-            }
-            else {
-                await doRequest(
-                    "login",
-                    async (response) => {
-                        await this.$store.dispatch("user/doLoginUser", response.data);
+            await doRequest(
+                "login",
+                async (response) => {
+                    await this.$store.dispatch("user/doLoginUser", response.data);
 
-                        const redirectAfterLogin = () => {
-                            const urlParams = new URLSearchParams(window.location.search);
-                            const redirect = urlParams.get('redirect');
+                    const redirectAfterLogin = () => {
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const redirect = urlParams.get('redirect');
 
-                            if (redirect !== null && redirect !== '/user/logout') {
-                                this.$router.push(redirect)
-                            }
-                            else {
-                                this.$router.push('/')
-                            }
+                        if (redirect !== null && redirect !== '/user/logout') {
+                            this.$router.push(redirect)
                         }
-                        this.$q.notify(
-                            getNotificationSettings(
-                                'positive',
-                                'You are logged in.',
-                                {
-                                    actions: [
-                                        { label: 'To home', color: 'yellow', handler: () => { this.$router.push('/'); } }
-                                    ]
-                                }
-                            )
-                        )
-                        // TODO: reset projects/users
-                        setTimeout(() => {
-                            redirectAfterLogin()
-                        }, 2000)
-                    },
-                    null,
-                    {
-                        method: 'post',
-                        postData: {
-                            email: this.userName,
-                            password: this.userPass,
-                            appName: 'testApp'
-                        },
-                        loader: { show: true, messageLoading: 'Logging in' },
-                        store: this.$store,
-                        q: this.$q
+                        else {
+                            this.$router.push('/')
+                        }
                     }
-                );
-            }
+                    this.$q.notify(
+                        getNotificationSettings(
+                            'positive',
+                            'You are logged in.',
+                            {
+                                actions: [
+                                    { label: 'To home', color: 'yellow', handler: () => { this.$router.push('/'); } }
+                                ]
+                            }
+                        )
+                    )
+                    setTimeout(() => {
+                        redirectAfterLogin()
+                    }, 2000)
+                },
+                null,
+                {
+                    method: 'post',
+                    postData: {
+                        email: this.userName,
+                        password: this.userPass,
+                        appName: 'testApp'
+                    },
+                    loader: { messageLoading: 'Logging in' },
+                    store: this.$store,
+                    q: this.$q
+                }
+            );
         },
         onReset() {
             this.userName = '';

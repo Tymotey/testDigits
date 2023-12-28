@@ -3,9 +3,7 @@
     <ComponentHeader />
     <ComponentLeft />
     <q-page-container style="height: 100vh;">
-      <Suspense>
-        <router-view />
-      </Suspense>
+      <router-view />
     </q-page-container>
   </q-layout>
 </template>
@@ -16,16 +14,7 @@ import ComponentLeft from './components/pageParts/ComponentLeft.vue';
 </script>
 
 <script>
-import { computed, reactive } from 'vue'
-
-const projects = reactive([])
-
 export default {
-  provide() {
-    return {
-      projects: computed(() => { return projects })
-    }
-  }
 }
 </script>
 

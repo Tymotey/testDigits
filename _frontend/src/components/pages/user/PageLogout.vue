@@ -3,25 +3,19 @@
 </template>
 
 <script>
-import { useQuasar } from 'quasar'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
 import { doRequest, getNotificationSettings } from '../../../functions'
 
 export default {
-    async setup() {
-        const router = useRouter()
-        const store = useStore()
-        const $q = useQuasar()
+    async mounted() {
 
-        let userToken = store.getters["user/getUserToken"];
+        let userToken = this.$store.getters["user/getUserToken"];
 
         if (userToken !== false) {
             doRequest(
                 'logout',
                 async (response) => {
-                    await store.dispatch("user/doLogoutUser");
-                    $q.notify(
+                    await this.$store.dispatch("user/doLogoutUser");
+                    this.$q.notify(
                         getNotificationSettings(
                             'positive',
                             'You are logged out.',
@@ -32,20 +26,23 @@ export default {
                                         label: "To home",
                                         color: "yellow",
                                         handler: () => {
-                                            router.push("/");
+                                            this.$router.push("/");
                                         },
                                     },
                                 ]
                             }
                         )
                     );
-                    // TODO: reset projects/users
                     setTimeout(() => {
-                        router.push("/");
+                        this.$router.push("/");
                     }, 2000);
                 },
                 null,
-                { show: true, messageLoading: 'Logging out...', store: store, q: $q }
+                {
+                    loader: { messageLoading: 'Logging out...' },
+                    store: this.$store,
+                    q: this.$q
+                }
             )
         }
 

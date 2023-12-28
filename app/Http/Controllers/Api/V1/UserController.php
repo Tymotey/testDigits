@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\User;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\V1\StoreUserRequest;
+use App\Http\Requests\V1\UpdateUserRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\UserResource;
 use App\Http\Resources\V1\UserCollection;
@@ -19,15 +19,20 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $filter = new UserFilter();
-        $queryItems = $filter->transform($request);
+        $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
-        if (count($queryItems) === 0) {
-            return new UserCollection(User::paginate());
-        } else {
-            $projects = User::where($queryItems)->paginate();
+        $users = User::where($filterItems);
 
-            return new UserCollection($projects->appends($request->query()));
+        // Add per page limit
+        $perPage = $request->input('results', 999);
+        if (!is_numeric($perPage)) {
+            $perPage = 999;
         }
+
+        // Order by column order
+        $users->orderBy('name', 'asc');
+
+        return new UserCollection($users->paginate($perPage)->appends($request->query()));
     }
 
     /**

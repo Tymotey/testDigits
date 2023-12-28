@@ -1,5 +1,5 @@
 <template>
-  <q-header elevated class="bg-primary text-white">
+  <q-header elevated class="bg-primary text-white" id="header_container">
     <q-toolbar>
       <q-btn dense flat round icon="fa-solid fa-bars" @click="toggleDrawer" />
       <q-toolbar-title>

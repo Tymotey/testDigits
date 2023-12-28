@@ -9,6 +9,17 @@ class Task extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'assigned_to',
+        'project_id',
+        'title',
+        'content',
+        'visible',
+        'status',
+        'created_by',
+        'sort_by',
+    ];
+
     /**
      * Add links to other tables.
      */

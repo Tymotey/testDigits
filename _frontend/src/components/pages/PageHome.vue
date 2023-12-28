@@ -1,7 +1,7 @@
 <template>
-    <div v-if="userIsLogged()" class="fit row no-wrap justify-start  content-stretch">
-        <div class="col-xs-3 self-stretch" style="overflow: auto;">
-            <div v-if="hasProjects()">
+    <div v-if="userIsLogged()" class="fit row wrap justify-start  content-stretch">
+        <div class="col-xs-12 col-md-3 self-stretch" style="overflow: auto;">
+            <div v-if="hasProjects()" id="projectListDiv">
                 <div class="fit row no-wrap justify-evenly items-center content-center">
                     <div>
                         Page: {{ this.$store.state.projects.page }} of {{ this.$store.state.projects.lastPage }}
@@ -17,15 +17,24 @@
                             @update:model-value="(value) => { setValue(value, 'perPage'); }" :options="perPageOptions"
                             :options-dense="true" :dense="true" :label="void 0" class="inlineSelect"></q-select>
                     </div>
+                    <div>
+                        <q-btn color="secondary" size="12px" dense icon="fa-solid fa-plus"
+                            @click="(e) => { goToLink(e, 'project/add/'); }">
+                            <q-tooltip class="bg-accent">Add project</q-tooltip>
+                        </q-btn>
+                    </div>
                 </div>
                 <q-list padding class="menu-list">
-                    <q-item clickable v-ripple v-for="project in this.$store.state.projects.projects"
-                        :active="this.$store.state.projects.active === project.id" @click="this.changeProject(project)">
-                        <q-item-section middle class="col-8">{{ project.title }}</q-item-section>
+                    <q-item v-ripple v-for="project in this.$store.state.projects.projects"
+                        :active="this.$store.state.projects.active === project.id"
+                        :class="[project.status === 'new' ? 'bg-green-2' : 'null']">
+                        <q-item-section middle class="col-8 cursor-pointer" @click="this.changeProject(project)">{{
+                            project.title
+                        }}</q-item-section>
                         <q-item-section middle side class="col-4">
                             <q-btn-group spread flat>
-                                <q-btn v-if="project.assignedTo === this.$store.getters['user/getUserId']" size="12px" dense
-                                    icon="fa-solid fa-arrows-to-dot" @click="this.changeProject(project)">
+                                <q-btn v-if="project.assignedTo === this.$store.getters['user/getUserId']" color="secondary"
+                                    size="12px" dense icon="fa-solid fa-arrows-to-dot" @click="this.changeProject(project)">
                                     <q-tooltip class="bg-accent">Assigned to me</q-tooltip>
                                 </q-btn>
                                 <q-btn size="12px" dense icon="fa-solid fa-trash"
@@ -43,30 +52,30 @@
             </div>
             <div v-else>No projects found.</div>
         </div>
-        <div class="col-xs-9 self-stretch" style="overflow: auto; padding: 10px;">
-            <div v-if="hasActiveProjects()">
-                {{ this.$store.getters["projects/getActiveProject"] }}
-            </div>
-            <div v-else>Please select a project first.</div>
+        <div class="col-xs-12 col-md-9 self-stretch" style="overflow: auto; padding: 10px;" id="projectPreviewDiv">
+            <ProjectPreviewComponent />
         </div>
     </div>
     <div v-else>
         Welcome.<br />
-        To continue using app, please <a href="#" @click="goToLogin">login</a>
+        To continue using app, please <a href="#" @click="goToLink">login</a>
     </div>
 </template>
 <script>
+import ProjectPreviewComponent from '../ProjectPreviewComponent.vue'
 import { doRequest } from '../../functions'
 
 export default {
+    components: {
+        ProjectPreviewComponent
+    },
     async mounted() {
         if (this.userIsLogged()) {
-            // this.$store.dispatch('projects/resetAllData');
             this.refreshData();
 
             this.timer = setInterval(() => {
                 this.refreshData()
-            }, 5000)
+            }, 10000)
         }
     },
     unmounted() {
@@ -86,19 +95,31 @@ export default {
         hasProjects() {
             return this.$store.getters["projects/hasProjects"]
         },
-        hasActiveProjects() {
-            return this.$store.getters["projects/getActiveProject"]
-        },
         async changeProject(item) {
+            if (window.innerWidth < 1024) {
+                document.getElementById("projectPreviewDiv").scrollIntoView({ behavior: 'smooth' });
+            }
             await this.$store.dispatch('projects/setActive', item.id);
         },
         async deleteProject(e, item) {
             if (confirm('Do you want to delete project ' + item.title + '?')) {
-                // Todo: delete this!!
+                await doRequest(
+                    "projects/" + item.id,
+                    async (response) => {
+                        this.refreshData()
+                    },
+                    null,
+                    {
+                        method: 'delete',
+                        loader: { messageLoading: 'Deleting project' },
+                        store: this.$store,
+                        q: this.$q
+                    }
+                );
             }
         },
         async editProject(e, item) {
-            this.goToLogin(e, 'projects/edit/' + item.id)
+            this.goToLink(e, '/project/edit/' + item.id)
         },
         getOptions(type = 'pages') {
             let options = [];
@@ -124,7 +145,7 @@ export default {
 
             this.refreshData();
         },
-        goToLogin(e, link = "/user/login") {
+        goToLink(e, link = "/user/login") {
             e.preventDefault();
             this.$router.push(link);
         },
@@ -132,10 +153,15 @@ export default {
             await doRequest(
                 "projects",
                 async (response) => {
+                    // set response data to store project
                     await this.$store.dispatch('projects/setAllData', response.data);
                 },
                 null,
-                { urlAdd: 'includeTasks=true', loader: { show: true, messageLoading: 'Refreshing projects list' }, store: this.$store, q: this.$q }
+                {
+                    loader: { messageLoading: 'Refreshing projects list' },
+                    store: this.$store,
+                    q: this.$q
+                }
             );
         }
     },

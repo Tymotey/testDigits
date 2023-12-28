@@ -1,3 +1,3 @@
 <template>
-    User profile
+    TODO: User profile
 </template>

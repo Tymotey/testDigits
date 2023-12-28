@@ -10,8 +10,8 @@ class TaskFilter extends ApiFilter
     protected $safeParams = [
         'assigned_to' => ['eq'],
         'project_id' => ['eq'],
-        'title' => ['eq'],
-        'content' => ['eq'],
+        'title' => ['eq', 'like'],
+        'content' => ['eq', 'like'],
         'visible' => ['eq'],
         'status' => ['eq'],
     ];
@@ -23,26 +23,4 @@ class TaskFilter extends ApiFilter
         'updatedAt' => 'updated_at',
     ];
 
-    public function transform(Request $request)
-    {
-        $eloQuery = [];
-
-        foreach ($this->safeParams as $param => $operators) {
-            $query = $request->query($param);
-
-            if (!isset($query)) {
-                continue;
-            }
-
-            $column = $this->columnMap[$param] ?? $param;
-
-            foreach ($operators as $operator) {
-                if (isset($query[$operator])) {
-                    $eloQuery[] = [$column, $this->operatorMap[$operator], $query[$operator]];
-                }
-            }
-        }
-
-        return $eloQuery;
-    }
 }

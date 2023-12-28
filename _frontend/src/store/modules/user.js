@@ -24,7 +24,6 @@ const actions = {
     doLoginUser({ commit }, data) {
         commit("setUserLoggedIn", data);
         commit("projects/resetAllData", null, { root: true }); // reset store projects state
-        // TODO: mai trebuie si altele?!?!
     },
     doLogoutUser({ commit }) {
         commit("setUserLoggedOut");

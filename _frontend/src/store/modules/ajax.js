@@ -2,12 +2,6 @@ const state = () => ({
     serverUrl: "http://127.0.0.1:8000/",
     apiUrl: "api/",
     apiVersionUrl: "v1/",
-    actions: {
-        login: "login",
-        logout: "logout",
-        projects: "projects",
-        tasks: "tasks",
-    },
 });
 
 const getters = {};
@@ -32,12 +26,7 @@ const actions = {
                     ? "?" + params.urlAdd
                     : "";
 
-            return (
-                state.serverUrl +
-                versionAdd +
-                state.actions[params.action] +
-                extraUrl
-            );
+            return state.serverUrl + versionAdd + params.action + extraUrl;
         } else {
             return false;
         }
