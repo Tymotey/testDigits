@@ -14,9 +14,9 @@
                 </template>
             </q-select>
 
-            <q-input v-if="['text', 'number'].indexOf(field.type) !== -1" :type="field.type"
+            <q-input v-if="['text', 'number', 'email', 'password'].indexOf(field.type) !== -1" :type="field.type"
                 :modelValue="values[field.model]" :label="field.label" :rules="field.validation"
-                @update:modelValue="(newData) => { catchUpdate(field.model, newData) }" />
+                @update:modelValue="(newData) => { catchUpdate(field.model, newData) }" :hint="field?.hint" />
         </div>
 
         <div>
@@ -76,6 +76,9 @@ export default {
                 let urlAdd = 'forSelect=true&';
                 if (controller === 'users') {
                     urlAdd += 'name[like]=' + val
+                }
+                else if (controller === 'projects') {
+                    urlAdd += 'title[like]=' + val
                 }
 
                 await doRequest(

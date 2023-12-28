@@ -1,4 +1,4 @@
-const defaultData = { id: false, name: "", email: "", token: false };
+const defaultData = { id: false, name: "", email: "", role: "", token: false };
 
 const state = () => ({
     userLogged: false,
@@ -14,6 +14,12 @@ const getters = {
     },
     getUserId: (state) => {
         return state.userData.id;
+    },
+    getUserName: (state) => {
+        return state.userData.name;
+    },
+    getUserRole: (state) => {
+        return state.userData.role;
     },
     getUserToken: (state) => {
         return state.userData.token;
@@ -38,6 +44,7 @@ const mutations = {
                 state.userData.id = data.user.id;
                 state.userData.name = data.user.name;
                 state.userData.email = data.user.email;
+                state.userData.role = data.user.role;
                 state.userLogged = true;
             }
         }

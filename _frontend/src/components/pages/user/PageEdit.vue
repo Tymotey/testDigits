@@ -1,7 +1,7 @@
 <template>
-    <div id="parent_form" class="fit row no-wrap justify-center items-center content-center">
+    <div id="parent_form" class="fit row no-wrap justify-center items-start content-center">
         <div id="parent_form_inner">
-            <FormComponent :fields="formFields" :values="this.project" :onSubmit="this.onSubmit" />
+            <FormComponent :fields="formFields" :values="this.user" :onSubmit="this.onSubmit" />
         </div>
     </div>
 </template>
@@ -12,40 +12,45 @@ import FormComponent from '../../FormComponent.vue'
 import { fields } from './fields'
 
 export default {
-    name: "PageEditProject",
+    name: "PageProfile",
     components: {
         FormComponent
     },
     props: {
-        projectId: {
+        userId: {
             type: String,
         },
     },
     data() {
         return {
             formFields: fields,
-            project: {}
+            user: {}
         }
     },
     mounted: async function () {
-        await this.getProjectData();
+        await this.getUserData();
     },
     methods: {
-        async getProjectData() {
+        async getUserData() {
+            let link = "users/" + this.userId;
+            if (this.userId === 'profile') {
+                link = 'profile';
+            }
+
             await doRequest(
-                "projects/" + this.projectId,
+                link,
                 async (response) => {
                     if (response.status === 200) {
-                        this.project = response.data.data;
+                        this.user = response.data.data;
                     }
                     else {
-                        this.project = {}
+                        this.user = {}
                     }
                 },
                 null,
                 {
                     method: 'get',
-                    loader: { messageLoading: 'Getting project data...' },
+                    loader: { messageLoading: 'Getting user data...' },
                     store: this.$store,
                     q: this.$q
                 }
@@ -56,14 +61,41 @@ export default {
                 ...data
             }
 
+            if (data.password !== '' && data.confirmPassword !== '') {
+                if (data.password !== data.confirmPassword) {
+                    delete (data.password);
+                    delete (data.confirmPassword);
+
+                    this.$q.notify(
+                        getNotificationSettings(
+                            "negative",
+                            'Passwords do not match.'
+                        )
+                    )
+                }
+                else {
+                    this.$q.notify(
+                        getNotificationSettings(
+                            "positive",
+                            'Password updated.'
+                        )
+                    )
+                }
+            }
+
+            let userId = this.userId;
+            if (userId === 'profile') {
+                userId = this.$store.getters["user/getUserId"]
+            }
+
             await doRequest(
-                "projects/" + this.projectId,
+                "users/" + userId,
                 async (response) => {
                     if (response.data === '') {
                         this.$q.notify(
                             getNotificationSettings(
                                 "positive",
-                                'Project saved.'
+                                'User saved.'
                             )
                         )
                         onSuccess()
@@ -73,7 +105,7 @@ export default {
                         this.$q.notify(
                             getNotificationSettings(
                                 "negative",
-                                'Cannot save project. Try again later.'
+                                'Cannot save user. Try again later.'
                             )
                         )
                         onError();
@@ -83,7 +115,7 @@ export default {
                 {
                     method: 'put',
                     postData: postData,
-                    loader: { messageLoading: 'Saving project...' },
+                    loader: { messageLoading: 'Saving user data...' },
                     store: this.$store,
                     q: this.$q
                 }

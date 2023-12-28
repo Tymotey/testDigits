@@ -56,15 +56,9 @@ export default {
                 ...data
             }
 
-            // TODO: Can be improved
-            if (postData.id) delete postData.id;
-            if (postData.createdAt) delete postData.createdAt;
-            if (postData.updatedAt) delete postData.updatedAt;
-
             await doRequest(
                 "tasks/" + this.taskId,
                 async (response) => {
-                    console.log(response);
                     if (response.data === '') {
                         this.$q.notify(
                             getNotificationSettings(

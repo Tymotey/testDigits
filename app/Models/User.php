@@ -20,8 +20,8 @@ class User extends Authenticatable //implements MustVerifyEmail
     protected $fillable = [
         'name',
         'email',
-        'password',
         'role',
+        'password',
     ];
 
     /**
@@ -30,7 +30,6 @@ class User extends Authenticatable //implements MustVerifyEmail
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
         'remember_token',
     ];
 
@@ -44,6 +43,7 @@ class User extends Authenticatable //implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
+    // Role functions
     public function isAdmin()
     {
         return $this->role === 'admin';

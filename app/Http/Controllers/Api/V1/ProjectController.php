@@ -18,6 +18,8 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
+        $user_id = $request->user()->id;
+
         $filter = new ProjectFilter();
         $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
@@ -37,8 +39,11 @@ class ProjectController extends Controller
 
         // If user type
         if ($request->user()->hasRole('user')) {
-            $projects->where('assigned_to', $request->user()->id);
-            $projects->where('visible', '1');
+            $projects->where(function ($query) use ($user_id) {
+                $query->where('assigned_to', '=', $user_id)
+                    ->orWhere('created_by', '=', $user_id);
+            });
+            $projects->where('visible', '1'); // TODO: daca nu e a lui!!!!
         }
 
         $projects->orderBy('title', 'asc');
@@ -51,7 +56,15 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        return (new ProjectResource($project->loadMissing(['tasks'])));
+        $request = request();
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && ($project->created_by === $request->user()->id || $project->assigned_to === $request->user()->id))) {
+            return (new ProjectResource($project->loadMissing(['tasks'])));
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 
     /**
@@ -70,7 +83,14 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        $project->update($request->all());
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $project->created_by === $request->user()->id)) {
+            $project->update($request->all());
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 
     /**
@@ -78,6 +98,14 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        $project->delete();
+        $request = request();
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $project->created_by === $request->user()->id)) {
+            $project->delete();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 }

@@ -14,8 +14,7 @@ class Project extends Model
         'title',
         'description',
         'visible',
-        'status',
-        'created_by'
+        'status'
     ];
 
     /**

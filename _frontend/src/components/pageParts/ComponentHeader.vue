@@ -14,6 +14,7 @@
 import { mapActions } from 'vuex'
 
 export default {
+  name: "ComponentPageHeader",
   methods: {
     ...mapActions('drawer', [
       'toggleDrawer'

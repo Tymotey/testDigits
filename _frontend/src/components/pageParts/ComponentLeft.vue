@@ -2,6 +2,14 @@
   <q-drawer v-model="drawerStatus" side="left" overlay elevated>
     <q-scroll-area class="fit">
       <q-list padding class="menu-list">
+        <q-item clickable v-ripple v-if="userLogged === true">
+          <q-item-section avatar>
+            <q-icon name="fa-solid fa-user"></q-icon>
+          </q-item-section>
+          <q-item-section>
+            Logged as: {{ this.$store.getters["user/getUserName"] }}
+          </q-item-section>
+        </q-item>
         <q-item clickable v-ripple to="/" @click="goToLink">
           <q-item-section avatar>
             <q-icon name="fa-solid fa-house"></q-icon>
@@ -18,7 +26,7 @@
             Login
           </q-item-section>
         </q-item>
-        <q-item clickable v-ripple v-if="userLogged === true" to="/user/myProfile" @click="goToLink">
+        <q-item clickable v-ripple v-if="userLogged === true" to="/user/profile" @click="goToLink">
           <q-item-section avatar>
             <q-icon name="fa-solid fa-user"></q-icon>
           </q-item-section>
@@ -43,6 +51,7 @@
 import { mapState, mapActions } from 'vuex'
 
 export default {
+  name: "ComponentPageLeft",
   computed: mapState({
     drawerStatus: state => state.drawer.drawerStatus,
     userLogged: state => state.user.userLogged

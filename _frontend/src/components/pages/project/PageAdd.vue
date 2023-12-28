@@ -28,13 +28,6 @@ export default {
                 ...data
             }
 
-            // TODO: Can be improved
-            if (postData.id) delete postData.id;
-            if (postData.assignedToData) delete postData.assignedToData;
-            if (postData.tasks) delete postData.tasks;
-            if (postData.createdAt) delete postData.createdAt;
-            if (postData.updatedAt) delete postData.updatedAt;
-
             await doRequest(
                 "projects/",
                 async (response) => {

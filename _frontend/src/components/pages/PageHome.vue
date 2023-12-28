@@ -37,11 +37,11 @@
                                     size="12px" dense icon="fa-solid fa-arrows-to-dot" @click="this.changeProject(project)">
                                     <q-tooltip class="bg-accent">Assigned to me</q-tooltip>
                                 </q-btn>
-                                <q-btn size="12px" dense icon="fa-solid fa-trash"
-                                    @click="(e) => this.deleteProject(e, project)">
+                                <q-btn v-if="userCanEditProject(project.createdBy)" size="12px" dense
+                                    icon="fa-solid fa-trash" @click="(e) => this.deleteProject(e, project)">
                                     <q-tooltip class="bg-accent">Delete Project</q-tooltip>
                                 </q-btn>
-                                <q-btn size="12px" dense icon="fa-solid fa-pen"
+                                <q-btn v-if="userCanEditProject(project.createdBy)" size="12px" dense icon="fa-solid fa-pen"
                                     @click="(e) => this.editProject(e, project)">
                                     <q-tooltip class="bg-accent">Edit Project</q-tooltip>
                                 </q-btn>
@@ -89,6 +89,12 @@ export default {
         }
     },
     methods: {
+        userCanEditProject(createdBy) {
+            let userId = this.$store.getters["user/getUserId"];
+            let userRole = this.$store.getters["user/getUserRole"];
+
+            return userRole === 'admin' || (userRole === 'user' && userId === createdBy)
+        },
         userIsLogged() {
             return this.$store.getters["user/isUserLogged"]
         },
