@@ -85,6 +85,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $request = request();
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $user->id === $request->user()->id)) {
+            $user->delete();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 }
