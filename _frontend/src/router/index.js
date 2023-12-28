@@ -1,8 +1,9 @@
 import PageHome from "../components/pages/PageHome.vue";
+import Page404 from "../components/pages/Page404.vue";
 // User
 import PageLogin from "../components/pages/user/PageLogin.vue";
 import PageLogout from "../components/pages/user/PageLogout.vue";
-import PageProfile from "../components/pages/user/PageProfile.vue";
+import PageUserEdit from "../components/pages/user/PageEdit.vue";
 // Projects
 import PageProjectAdd from "../components/pages/project/PageAdd.vue";
 import PageProjectEdit from "../components/pages/project/PageEdit.vue";
@@ -17,6 +18,11 @@ const routes = [
         component: PageHome,
     },
     {
+        path: "/404",
+        name: "404",
+        component: Page404,
+    },
+    {
         path: "/user",
         children: [
             {
@@ -29,9 +35,20 @@ const routes = [
                 meta: { requiresAuth: true },
             },
             {
-                path: "myProfile",
-                component: PageProfile,
+                path: "profile/:userId",
+                component: PageUserEdit,
+                meta: { requiresAuth: true, requireAdmin: true },
+                props: (route) => ({
+                    userId: route.params.userId,
+                }),
+            },
+            {
+                path: "profile",
+                component: PageUserEdit,
                 meta: { requiresAuth: true },
+                props: (route) => ({
+                    userId: "profile",
+                }),
             },
         ],
     },
@@ -47,13 +64,8 @@ const routes = [
             {
                 path: "edit/:projectId",
                 component: PageProjectEdit,
-                meta: { requiresAuth: true },
+                meta: { requiresAuth: true, requireCreator: true },
                 props: (route) => ({ projectId: route.params.projectId }),
-            },
-            {
-                path: "delete/:projectId",
-                component: PageHome,
-                meta: { requiresAuth: true },
             },
         ],
     },
@@ -69,13 +81,8 @@ const routes = [
             {
                 path: "edit/:taskId",
                 component: PageTaskEdit,
-                meta: { requiresAuth: true },
+                meta: { requiresAuth: true, requireCreator: true },
                 props: (route) => ({ taskId: route.params.taskId }),
-            },
-            {
-                path: "delete/:taskId",
-                component: PageHome,
-                meta: { requiresAuth: true },
             },
         ],
     },

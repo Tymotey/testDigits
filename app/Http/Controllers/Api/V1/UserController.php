@@ -36,14 +36,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreUserRequest $request)
@@ -61,19 +53,31 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $user->id === $request->user()->id)) {
+            $data = $request->all();
+
+            // Change password if both passwords are the same
+            if (isset($data['password']) && isset($data['confirmPassword'])) {
+                if ($data['password'] !== $data['confirmPassword']) {
+                    unset($data['password']);
+                }
+                unset($data['confirmPassword']);
+            } else {
+                unset($data['password']);
+                unset($data['confirmPassword']);
+            }
+
+            $user->update($data);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 
     /**

@@ -18,6 +18,8 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        $user_id = $request->user()->id;
+
         $filter = new TaskFilter();
         $filterItems = $filter->transform($request); // [['column', 'operator', 'value']]
 
@@ -37,8 +39,11 @@ class TaskController extends Controller
 
         // If user type
         if ($request->user()->hasRole('user')) {
-            $tasks->where('assigned_to', $request->user()->id);
-            $tasks->where('visible', '1');
+            $tasks->where(function ($query) use ($user_id) {
+                $query->where('assigned_to', '=', $user_id)
+                    ->orWhere('created_by', '=', $user_id);
+            });
+            $tasks->where('visible', '1'); // TODO: daca nu e a lui!!!!
         }
 
         // Order by column order
@@ -53,7 +58,15 @@ class TaskController extends Controller
     public function show(Task $task)
     {
         // return $task;
-        return new TaskResource($task);
+        $request = request();
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && ($task->created_by === $request->user()->id || $task->assigned_to === $request->user()->id))) {
+            return new TaskResource($task);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 
     /**
@@ -72,9 +85,14 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        // if ($request->user()->hasRole('admin') || ) {
-        $task->update($request->all());
-        // }
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $task->created_by === $request->user()->id)) {
+            $task->update($request->all());
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 
     /**
@@ -82,6 +100,14 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        $task->delete();
+        $request = request();
+        if ($request->user()->hasRole('admin') || ($request->user()->hasRole('user') && $task->created_by === $request->user()->id)) {
+            $task->delete();
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to this resource',
+            ], 401);
+        }
     }
 }

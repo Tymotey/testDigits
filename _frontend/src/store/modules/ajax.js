@@ -13,7 +13,7 @@ const actions = {
     ) => {
         if (params.action !== "") {
             let isUserActions =
-                ["login", "logout"].indexOf(params.action) !== -1;
+                ["login", "logout", "profile"].indexOf(params.action) !== -1;
 
             // Add version for all actions except login/logout
             let versionAdd = isUserActions

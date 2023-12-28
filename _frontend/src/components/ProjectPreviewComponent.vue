@@ -6,7 +6,8 @@
         <h2>{{ this.project?.title }}</h2>
         <div v-if="this.project.description !== ''">{{ this.project.description }}</div>
         <span>
-            Assigned to: <strong>{{ this.project?.assignedToData?.name }}</strong>
+            Created by: <strong>{{ this.project.createdByData.name }}</strong>
+            Assigned to: <strong>{{ this.project.assignedToData.name }}</strong>
             Visibility: <strong>{{ this.getProjectVisibilityLabel() }}</strong>
             Status: <strong>{{ this.getProjectProgressLabel() }}</strong>
             &nbsp;&nbsp;
@@ -24,34 +25,31 @@
                         <div class="col-1" style="cursor: move;">
                             <q-icon name="fa-solid fa-bars" />
                         </div>
-                        <div class="col-8">
+                        <div class="col-10">
                             <span class="text-weight-bold">{{ this.project?.tasks[index].title }}</span>
                             <br />
                             {{ this.project?.tasks[index].content }}
                         </div>
-                        <div class="col-3">
-                            <q-btn-group spread flat>
-                                <q-btn v-if="this.project?.tasks[index].status === 'not-done'" color="secondary" size="12px"
-                                    dense icon="fa-solid fa-check"
+                        <div class="col-1 text-right">
+                            <q-btn-group flat>
+                                <q-btn
+                                    v-if="this.project?.tasks[index].status === 'not-done' && isCurrentUserAssignedToTask(this.project?.tasks[index].assignedTo)"
+                                    color="secondary" size="12px" dense icon="fa-solid fa-check"
                                     @click="async (e) => { await setTaskStatusValue('done', this.project?.tasks[index].id) }">
                                     <q-tooltip class="bg-accent">Mark complete</q-tooltip>
                                 </q-btn>
-                                <q-btn v-if="this.project?.tasks[index].status === 'done'" color="secondary" size="12px"
-                                    dense icon="fa-solid fa-xmark"
+                                <q-btn
+                                    v-if="this.project?.tasks[index].status === 'done' && isCurrentUserAssignedToTask(this.project?.tasks[index].assignedTo)"
+                                    color="secondary" size="12px" dense icon="fa-solid fa-xmark"
                                     @click="async (e) => { await setTaskStatusValue('not-done', this.project?.tasks[index].id) }">
                                     <q-tooltip class="bg-accent">Mark incomplete</q-tooltip>
                                 </q-btn>
-                                <q-btn
-                                    v-if="this.project?.tasks[index].assignedTo === this.$store.getters['user/getUserId']"
-                                    color="secondary" size="12px" dense icon="fa-solid fa-arrows-to-dot">
-                                    <q-tooltip class="bg-accent">Assigned to me</q-tooltip>
-                                </q-btn>
-                                <q-btn size="12px" dense icon="fa-solid fa-trash"
-                                    @click="(e) => this.deleteTask(e, this.project?.tasks[index])">
+                                <q-btn v-if="userCanEditTask(this.project?.tasks[index].createdBy)" size="12px" dense
+                                    icon="fa-solid fa-trash" @click="(e) => this.deleteTask(e, this.project?.tasks[index])">
                                     <q-tooltip class="bg-accent">Delete Task</q-tooltip>
                                 </q-btn>
-                                <q-btn size="12px" dense icon="fa-solid fa-pen"
-                                    @click="(e) => this.editTask(e, this.project?.tasks[index])">
+                                <q-btn v-if="userCanEditTask(this.project?.tasks[index].createdBy)" size="12px" dense
+                                    icon="fa-solid fa-pen" @click="(e) => this.editTask(e, this.project?.tasks[index])">
                                     <q-tooltip class="bg-accent">Edit Task</q-tooltip>
                                 </q-btn>
                             </q-btn-group>
@@ -89,6 +87,17 @@ export default {
         }
     },
     methods: {
+        isCurrentUserAssignedToTask(assignedId) {
+            let userId = this.$store.getters["user/getUserId"];
+
+            return userId === assignedId;
+        },
+        userCanEditTask(createdBy) {
+            let userId = this.$store.getters["user/getUserId"];
+            let userRole = this.$store.getters["user/getUserRole"];
+
+            return userRole === 'admin' || (userRole === 'user' && userId === createdBy)
+        },
         async onMoveEnd() {
             this.dragging = false;
 

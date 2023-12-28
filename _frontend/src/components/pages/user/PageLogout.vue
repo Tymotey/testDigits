@@ -6,6 +6,7 @@
 import { doRequest, getNotificationSettings } from '../../../functions'
 
 export default {
+    name: "PageLogoutComponent",
     async mounted() {
 
         let userToken = this.$store.getters["user/getUserToken"];

@@ -1,3 +1,4 @@
+import { fas0 } from "@quasar/extras/fontawesome-v6";
 import axios from "axios";
 
 const getNotificationSettings = (
@@ -38,6 +39,23 @@ const getPaginationParams = (type, store) => {
     return paginationParams.join("&");
 };
 
+const returnRequestResult = async (requestUrl, data) => {
+    let userToken = data.store.getters["user/getUserToken"];
+
+    let headers = {
+        Authorization: `Bearer ` + userToken,
+    };
+
+    try {
+        const response = await axios.get(requestUrl, {
+            headers: headers,
+        });
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
+
 const doRequest = async (
     actionName = false,
     actionOnSuccess = () => {},
@@ -52,7 +70,8 @@ const doRequest = async (
         };
 
         // Url add
-        let isUserActions = ["login", "logout"].indexOf(actionName) !== -1;
+        let isUserActions =
+            ["login", "logout", "profile"].indexOf(actionName) !== -1;
         let isPageAction = actionName.search("/") !== -1;
         let paginationUrlAdd =
             !isUserActions || !isPageAction
@@ -142,4 +161,4 @@ const doRequest = async (
     }
 };
 
-export { doRequest, getNotificationSettings };
+export { returnRequestResult, doRequest, getNotificationSettings };

@@ -15,4 +15,14 @@ let labelsVisibility = [
     { value: 1, label: "Visible" },
 ];
 
-export { labelsStatusProject, labelsStatusTask, labelsVisibility };
+let labelsUserRole = [
+    { value: "user", label: "User" },
+    { value: "admin", label: "Admin" },
+];
+
+export {
+    labelsStatusProject,
+    labelsStatusTask,
+    labelsVisibility,
+    labelsUserRole,
+};

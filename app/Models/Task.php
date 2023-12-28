@@ -16,7 +16,6 @@ class Task extends Model
         'content',
         'visible',
         'status',
-        'created_by',
         'sort_by',
     ];
 

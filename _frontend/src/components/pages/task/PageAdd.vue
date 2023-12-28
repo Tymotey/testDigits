@@ -36,10 +36,6 @@ export default {
             }
 
             // TODO: TEST USER
-            // TODO: Can be improved
-            if (postData.id) delete postData.id;
-            if (postData.createdAt) delete postData.createdAt;
-            if (postData.updatedAt) delete postData.updatedAt;
 
             await doRequest(
                 "tasks/",

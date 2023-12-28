@@ -58,14 +58,30 @@ class AuthenticationController extends Controller
         }
     }
 
+
+
     /**
-     * Destroy an authenticated session.
-     *
+     * Display the current user data.
+     * 
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function profile(Request $request)
     {
+        $user_id = $request->user()->id;
+        $user = User::find($user_id);
 
+        if ($user !== null) {
+            return response()->json([
+                'success' => true,
+                'data' => $user,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'You must login to see your profile',
+            ], 401);
+        }
+
+        // return new UserResource($user);
     }
 }

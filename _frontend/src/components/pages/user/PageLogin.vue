@@ -22,6 +22,7 @@ import { ref } from 'vue'
 import { getNotificationSettings, doRequest } from '../../../functions'
 
 export default {
+    name: "PageLoginComponent",
     data() {
         return {
             userName: ref(null),
