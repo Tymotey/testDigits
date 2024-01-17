@@ -1,3 +1,13 @@
+# Purpose of test:
+
+Create a API server in Laravel(for CRUD operations) and an frontend page created in VueJS.
+System should be able to do:
+
+-   normal user login
+-   users can create/edit/edit projects. Each project has description, status and other info.
+-   each project have tasks with description and status
+-   admin user that is able to see/edit/delete all projects and tasks
+
 # Install:
 
 ## Server
